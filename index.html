@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Waterkolom Monitor</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b6efd">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background:#f6f8fb; }
+    header { background:#0b6efd; color:#fff; padding:16px; font-size:20px; }
+    main { padding:16px; max-width:900px; margin:auto; }
+    .card { background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); margin-bottom:20px; }
+    .value { font-size:40px; font-weight:700; }
+    canvas { width:100%; height:250px; }
+    button { background:#0b6efd; color:#fff; padding:10px; border:0; border-radius:8px; }
+  </style>
+</head>
+<body>
+<header>Waterkolom Monitor</header>
+<main>
+  <div class="card">
+    <div>Laatste meting:</div>
+    <div><span id="val" class="value">—</span> m</div>
+    <div id="time" style="color:#666;margin-top:6px;">—</div>
+    <button id="refresh">Vernieuwen</button>
+  </div>
+
+  <div class="card">
+    <div>Trend (100 punten)</div>
+    <canvas id="chart"></canvas>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+
+</body>
+</html>
