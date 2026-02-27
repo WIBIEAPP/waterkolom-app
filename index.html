@@ -2,44 +2,110 @@
 <html lang="nl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Waterkolom Monitor</title>
-  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Waterkolom App</title>
   <meta name="theme-color" content="#0b6efd">
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background:#f6f8fb; }
-    header { background:#0b6efd; color:#fff; padding:16px; font-size:20px; }
-    main { padding:16px; max-width:900px; margin:auto; }
-    .card { background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); margin-bottom:20px; }
-    .value { font-size:40px; font-weight:700; }
-    canvas { width:100%; height:250px; }
-    button { background:#0b6efd; color:#fff; padding:10px; border:0; border-radius:8px; }
-  </style>
+  <link rel="manifest" href="manifest.webmanifest">
+  <!-- iOS PWA meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header>Waterkolom Monitor</header>
-<main>
-  <div class="card">
-    <div>Laatste meting:</div>
-    <div><span id="val" class="value">—</span> m</div>
-    <div id="time" style="color:#666;margin-top:6px;">—</div>
-    <button id="refresh">Vernieuwen</button>
-  </div>
+  <header class="app-header">
+    <div class="title">Waterkolom</div>
+    <button id="btnTheme" class="icon-btn" title="Thema wisselen">🌓</button>
+  </header>
 
-  <div class="card">
-    <div>Trend (100 punten)</div>
-    <canvas id="chart"></canvas>
-  </div>
-</main>
+  <main id="views">
+    <!-- HOME -->
+    <section data-view="home" class="view active">
+      <div class="card">
+        <div class="muted">Laatste meting</div>
+        <div class="big">
+          <span id="lastVal">—</span> <span class="unit">m</span>
+        </div>
+        <div id="status" class="badge">Status: —</div>
+        <div id="updated" class="muted small">—</div>
+        <div class="actions">
+          <button id="btnRefresh" class="btn primary">Vernieuwen</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="muted">Snelle info</div>
+        <ul class="list">
+          <li><span>Auto‑refresh</span><span id="autoRefreshLabel">15s</span></li>
+          <li><span>OK &lt; </span><span id="okThrLabel">1.00 m</span></li>
+          <li><span>Waarschuwing &lt; </span><span id="warnThrLabel">2.00 m</span></li>
+        </ul>
+      </div>
+    </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js"></script>
+    <!-- TREND -->
+    <section data-view="trend" class="view">
+      <div class="card">
+        <div class="row between center">
+          <div>Trend (laatste <span id="pointsCount">100</span> punten)</div>
+          <div>
+            <select id="selResults">
+              <option value="100" selected>100</option>
+              <option value="250">250</option>
+              <option value="500">500</option>
+            </select>
+          </div>
+        </div>
+        <canvas id="chart" height="260"></canvas>
+      </div>
+    </section>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js');
-  }
-</script>
+    <!-- ALERTS -->
+    <section data-view="alerts" class="view">
+      <div class="card">
+        <h3>Alarm drempels</h3>
+        <div class="grid2">
+          <label>OK max (m)<input id="okThr" type="number" step="0.01" min="0" max="3"></label>
+          <label>Waarschuwing max (m)<input id="warnThr" type="number" step="0.01" min="0" max="3"></label>
+        </div>
+        <div class="actions">
+          <button id="btnSaveThr" class="btn primary">Opslaan</button>
+          <button id="btnTestAlert" class="btn">Test alert</button>
+          <button id="btnClearAlerts" class="btn danger">Wis log</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Alert log (dummy)</h3>
+        <ul id="alertList" class="list"></ul>
+      </div>
+    </section>
 
-</body>
-</html>
+    <!-- CONTROLS -->
+    <section data-view="controls" class="view">
+      <div class="card">
+        <h3>Apparaten (dummy)</h3>
+        <div class="toggle">
+          <label>Pomp</label>
+          <input type="checkbox" id="togPump">
+        </div>
+        <div class="toggle">
+          <label>Auto‑flush</label>
+          <input type="checkbox" id="togFlush" checked>
+        </div>
+        <div class="toggle">
+          <label>Vlotter override</label>
+          <input type="checkbox" id="togFloat">
+        </div>
+        <div class="muted small">Deze knoppen veranderen enkel de UI‑status (geen echte hardware actie).</div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section data-view="settings" class="view">
+      <div class="card">
+        <h3>Data bron</h3>
+        <div class="grid2">
+          <label>Channel ID<input id="stChannel" type="number" min="1"></label>
+          <label>Read API Key<input id="stKey" type="text" placeholder="Leeg laten bij public channel"></label>
+        </div>
+        <div class="grid2">
+          <label>Field #<input id="stField" type

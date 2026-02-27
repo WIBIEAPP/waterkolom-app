@@ -1,8 +1,9 @@
 self.addEventListener('install', (e)=> {
   e.waitUntil(
-    caches.open('static-v1').then(c=>c.addAll([
+    caches.open('static-v2').then(c=>c.addAll([
       './',
       './index.html',
+      './app.css',
       './app.js',
       './manifest.webmanifest',
       'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'
